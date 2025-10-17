@@ -8,11 +8,7 @@ import { Package, MapPin, Phone, Mail } from "lucide-react"
 import { MessageSellerButton } from "@/components/message-seller-button"
 import Link from "next/link"
 import dynamic from "next/dynamic"
-
-const LocationMap = dynamic(() => import("@/components/location-map").then((mod) => ({ default: mod.LocationMap })), {
-  ssr: false,
-  loading: () => <div className="h-64 bg-muted rounded-lg flex items-center justify-center">Loading map...</div>,
-})
+import LocationMap from "@/components/map-wrapper"
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
