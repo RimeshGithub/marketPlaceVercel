@@ -1,0 +1,166 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { Star, MessageCircle, Edit2, Trash2 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { formatDistanceToNow } from "date-fns"
+import { useToast } from "@/hooks/use-toast"
+import { RatingForm } from "./rating-form"
+
+interface Review {
+  id: string
+  rating: number
+  comment: string
+  created_at: string
+  buyer_id: string
+}
+
+interface SellerReviewsDisplayProps {
+  sellerId: string
+}
+
+export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null)
+  const supabase = createClient()
+  const { toast } = useToast()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setCurrentUserId(user?.id || null)
+
+      const { data, error } = await supabase
+        .from("ratings")
+        .select("*")
+        .eq("seller_id", sellerId)
+        .order("created_at", { ascending: false })
+
+      if (error) {
+        console.error("Error fetching reviews:", error)
+        setLoading(false)
+        return
+      }
+
+      setReviews(data || [])
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [sellerId, supabase])
+
+  const handleDelete = async (reviewId: string) => {
+    if (!confirm("Are you sure you want to delete this review?")) return
+
+    try {
+      const { error } = await supabase.from("ratings").delete().eq("id", reviewId)
+
+      if (error) throw error
+
+      setReviews(reviews.filter((r) => r.id !== reviewId))
+      toast({
+        title: "Success",
+        description: "Review deleted successfully",
+      })
+    } catch (error) {
+      console.error("Error deleting review:", error)
+      toast({
+        title: "Error",
+        description: "Failed to delete review",
+        variant: "destructive",
+      })
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-8">Loading reviews...</div>
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">No reviews yet</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold">Customer Reviews ({reviews.length})</h3>
+      {reviews.map((review) => (
+        <Card key={review.id}>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${
+                      i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
+                    }`}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
+                </span>
+                {currentUserId === review.buyer_id && (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingReviewId(editingReviewId === review.id ? null : review.id)}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(review.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+            {review.comment && <p className="text-foreground mb-4">{review.comment}</p>}
+
+            {editingReviewId === review.id && (
+              <div className="mt-4 pt-4 border-t">
+                <RatingForm
+                  productId=""
+                  sellerId={sellerId}
+                  existingRating={{
+                    id: review.id,
+                    rating: review.rating,
+                    comment: review.comment,
+                  }}
+                  onRatingSubmitted={() => {
+                    setEditingReviewId(null)
+                    // Refresh reviews
+                    const fetchReviews = async () => {
+                      const { data } = await supabase
+                        .from("ratings")
+                        .select("*")
+                        .eq("seller_id", sellerId)
+                        .order("created_at", { ascending: false })
+                      setReviews(data || [])
+                    }
+                    fetchReviews()
+                  }}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+}

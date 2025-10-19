@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, LogOut, Settings, Package } from "lucide-react"
+import { User, LogOut, Edit, Package } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -48,28 +48,25 @@ export function UserMenu({ user }: { user: SupabaseUser }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
+        <DropdownMenuLabel className="flex items-center gap-0.5">
+          <img src={user.user_metadata.avatar_url.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-8 w-8 rounded-full" />
           <div className="flex flex-col">
-            <span className="text-sm font-medium">{displayName || user.email}</span>
+            <span className="text-sm font-medium">{displayName || user.user_metadata.full_name}</span>
             <span className="text-xs text-muted-foreground">{user.email}</span>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push("/dashboard")}>
-          <Package className="mr-2 h-4 w-4" />
+          <Package className="mr-0.5 h-4 w-4" />
           My Listings
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/dashboard/orders")}>
-          <Package className="mr-2 h-4 w-4" />
-          Orders
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push("/settings")}>
-          <Settings className="mr-2 h-4 w-4" />
-          Settings
+        <DropdownMenuItem onClick={() => router.push("/profile")}>
+          <Edit className="mr-0.5 h-4 w-4" />
+          Change Name
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-0.5 h-4 w-4" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

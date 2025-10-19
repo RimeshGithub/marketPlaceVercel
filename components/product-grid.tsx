@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Package } from "lucide-react"
 import Link from "next/link"
+import { WishlistButton } from "@/components/wishlist-button"
 
 type Product = {
   id: string
@@ -35,7 +36,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
       {products.map((product) => (
         <Card key={product.id} className="overflow-hidden group">
           <Link href={`/products/${product.id}`}>
-            <div className="aspect-square bg-muted overflow-hidden">
+            <div className="aspect-square bg-muted overflow-hidden relative">
               {product.images && product.images.length > 0 ? (
                 <img
                   src={product.images[0] || "/placeholder.svg"}
@@ -47,6 +48,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                   <Package className="h-12 w-12 text-muted-foreground" />
                 </div>
               )}
+              <div className="absolute top-2 right-2">
+                <WishlistButton productId={product.id} />
+              </div>
             </div>
           </Link>
           <CardContent className="p-4">

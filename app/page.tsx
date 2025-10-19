@@ -17,14 +17,14 @@ export default async function HomePage() {
         avatar_url
       )
     `)
-    .eq("status", "active")
+    .eq("status", "available")
     .order("created_at", { ascending: false })
     .limit(6)
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-primary/10 to-background py-20 md:py-32">
+      <section className="relative py-20">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-balance">Buy and Sell with Confidence</h1>

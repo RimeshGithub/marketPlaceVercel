@@ -46,10 +46,6 @@ export function SettingsForm({ profile }: SettingsFormProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Profile Settings</CardTitle>
-        <CardDescription>Update your display name and profile information</CardDescription>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">

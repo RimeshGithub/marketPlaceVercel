@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Package, MapPin, Phone, Mail } from "lucide-react"
 import { MessageSellerButton } from "@/components/message-seller-button"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import { WishlistButton } from "@/components/wishlist-button"
+import { RatingForm } from "@/components/rating-form"
+import { SellerRatingDisplay } from "@/components/seller-rating-display"
 import LocationMap from "@/components/map-wrapper"
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -36,7 +39,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     data: { user },
   } = await supabase.auth.getUser()
 
+  let isWishlisted = false
+  if (user) {
+    const { data: wishlistItem } = await supabase
+      .from("wishlist")
+      .select("id")
+      .eq("product_id", id)
+      .eq("user_id", user.id)
+      .maybeSingle()
+    isWishlisted = !!wishlistItem
+  }
+
   const isOwnProduct = user?.id === product.seller_id
+
+  let hasRated = false
+  if (user) {
+    const { data: existingRating } = await supabase
+      .from("ratings")
+      .select("id")
+      .eq("product_id", id)
+      .eq("buyer_id", user.id)
+      .maybeSingle()
+    hasRated = !!existingRating
+  }
 
   const paymentMethodLabels: Record<string, string> = {
     cash_on_delivery: "Cash on Delivery",
@@ -48,7 +73,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Image Gallery */}
         <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
+          <div className="aspect-square overflow-hidden rounded-lg border bg-muted relative">
             {product.images && product.images.length > 0 ? (
               <img
                 src={product.images[0] || "/placeholder.svg"}
@@ -60,6 +85,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <Package className="h-24 w-24 text-muted-foreground" />
               </div>
             )}
+            <div className="absolute top-4 right-4">
+              <WishlistButton productId={product.id} initialWishlisted={isWishlisted} />
+            </div>
           </div>
 
           {product.images && product.images.length > 1 && (
@@ -123,8 +151,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           {/* Seller Info */}
           <Card>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-4 space-y-4">
               <h3 className="font-semibold">Seller Information</h3>
+
+              <div>
+                <SellerRatingDisplay sellerId={product.seller_id} />
+              </div>
+
               <p className="text-sm text-muted-foreground">{product.profiles?.full_name || "Anonymous Seller"}</p>
 
               {product.seller_phone && (
@@ -140,6 +173,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <span>{product.seller_email}</span>
                 </div>
               )}
+
+              <Button asChild variant="outline" className="w-full mt-2 bg-transparent">
+                <Link href={`/seller/${product.seller_id}`}>View all products</Link>
+              </Button>
             </CardContent>
           </Card>
 
@@ -176,6 +213,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
       </div>
+
+      {!isOwnProduct && user && !hasRated && (
+        <div className="mt-12 max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rate this seller</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RatingForm productId={product.id} sellerId={product.seller_id} />
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
