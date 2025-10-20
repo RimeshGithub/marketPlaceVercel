@@ -49,7 +49,7 @@ export function UserMenu({ user }: { user: SupabaseUser }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel className="flex items-center gap-0.5">
-          <img src={user.user_metadata.avatar_url.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-8 w-8 rounded-full" />
+          <img src={user.user_metadata.avatar_url?.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-8 w-8 rounded-full" />
           <div className="flex flex-col">
             <span className="text-sm font-medium">{displayName || user.user_metadata.full_name}</span>
             <span className="text-xs text-muted-foreground">{user.email}</span>

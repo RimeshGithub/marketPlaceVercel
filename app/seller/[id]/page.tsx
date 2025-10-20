@@ -22,7 +22,7 @@ export default async function SellerPage({ params }: { params: Promise<{ id: str
     .from("products")
     .select("*")
     .eq("seller_id", id)
-    .eq("status", "active")
+    .eq("status", "available")
     .order("created_at", { ascending: false })
 
   return (

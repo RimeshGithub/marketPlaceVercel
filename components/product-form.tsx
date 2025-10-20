@@ -175,10 +175,10 @@ export function ProductForm() {
       <Card>
         <CardContent className="pt-6 space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
-              placeholder="e.g., iPhone 13 Pro Max"
+              placeholder="Enter a title for your product..."
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -186,7 +186,7 @@ export function ProductForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               placeholder="Describe your product in detail..."
@@ -199,13 +199,13 @@ export function ProductForm() {
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($) *</Label>
+              <Label htmlFor="price">Price (Rs)</Label>
               <Input
                 id="price"
                 type="number"
-                step="0.01"
+                step="1"
                 min="0"
-                placeholder="0.00"
+                placeholder="0"
                 required
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -213,7 +213,7 @@ export function ProductForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category">Category</Label>
               <Select
                 required
                 value={formData.category}
@@ -233,7 +233,7 @@ export function ProductForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="condition">Condition *</Label>
+              <Label htmlFor="condition">Condition</Label>
               <Select
                 required
                 value={formData.condition}
@@ -280,7 +280,7 @@ export function ProductForm() {
           </div>
 
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">Payment Methods *</h3>
+            <h3 className="text-lg font-semibold mb-4">Payment Methods</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -305,19 +305,19 @@ export function ProductForm() {
             </div>
 
             {formData.paymentMethods.includes("online_banking") && (
-              <div className="mt-4 p-4 bg-muted rounded-lg space-y-4">
+              <div className="mt-4 p-4 border border-muted rounded-lg space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="bankName">Bank Name *</Label>
+                  <Label htmlFor="bankName">Bank Name</Label>
                   <Input
                     id="bankName"
-                    placeholder="e.g., Chase Bank"
+                    placeholder="Your bank name"
                     required
                     value={formData.bankName}
                     onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="bankAccount">Bank Account Number *</Label>
+                  <Label htmlFor="bankAccount">Bank Account Number</Label>
                   <Input
                     id="bankAccount"
                     placeholder="Your bank account number"
@@ -331,7 +331,7 @@ export function ProductForm() {
           </div>
 
           <div className="space-y-2">
-            <Label>Images (up to 5) *</Label>
+            <Label>Images (upto 5)</Label>
             <div className="grid gap-4">
               {imagePreviews.length > 0 && (
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -383,7 +383,7 @@ export function ProductForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="meetup">Preferred Meetup Location *</Label>
+            <Label htmlFor="meetup">Preferred Meetup Location</Label>
             <LocationPicker
               value={formData.meetupLocation}
               latitude={formData.latitude}
@@ -394,7 +394,7 @@ export function ProductForm() {
 
           {error && <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{error}</div>}
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 mt-10">
             <Button type="submit" disabled={isLoading} className="flex-1">
               {isLoading ? (
                 <>

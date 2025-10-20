@@ -60,7 +60,7 @@ export function WishlistButton({ productId, initialWishlisted = false }: Wishlis
       size="icon"
       onClick={handleToggleWishlist}
       disabled={isLoading}
-      className="bg-white/80 hover:bg-white rounded-full"
+      className="bg-white/90 hover:bg-white hover:scale-115 border-2 border-gray-400 rounded-full"
     >
       <Heart
         className={`h-5 w-5 transition-colors ${isWishlisted ? "fill-red-500 text-red-500" : "text-muted-foreground"}`}

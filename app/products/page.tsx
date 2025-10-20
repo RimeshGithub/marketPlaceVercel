@@ -26,7 +26,7 @@ export default async function ProductsPage({
         avatar_url
       )
     `)
-    .eq("status", "active")
+    .eq("status", "available")
 
   // Apply filters
   if (params.search) {
@@ -52,20 +52,15 @@ export default async function ProductsPage({
   const { data: products } = await query.order("created_at", { ascending: false })
 
   return (
-    <div className="container py-10">
+    <div className="pt-10 pb-30">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Browse Products</h1>
         <p className="mt-2 text-muted-foreground">Discover great deals from sellers around the world</p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
-        <aside className="space-y-6">
-          <ProductFilters />
-        </aside>
-
-        <main>
-          <ProductGrid products={products || []} />
-        </main>
+      <div className="flex flex-col gap-8">
+        <ProductFilters />
+        <ProductGrid products={products || []} />
       </div>
     </div>
   )

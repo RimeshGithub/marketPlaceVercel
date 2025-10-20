@@ -35,6 +35,7 @@ export function SettingsForm({ profile }: SettingsFormProps) {
       if (error) throw error
 
       setMessage("Display name updated successfully!")
+      setTimeout(() => window.location.reload(), 2000)
       router.refresh()
     } catch (error) {
       setMessage("Error updating display name. Please try again.")

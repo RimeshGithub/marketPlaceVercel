@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { MapPin, Loader2, X, Navigation } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
 
 interface LocationResult {
   lat: string
@@ -124,8 +125,8 @@ export function LocationPicker({ value, latitude, longitude, onChange }: Locatio
       <div className="flex gap-2 border-b">
         <button
           type="button"
-          onClick={() => setMode("search")}
-          className={`px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
+          onClick={() => {setMode("search"); clearLocation()}}
+          className={`cursor-pointer px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
             mode === "search"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -135,8 +136,8 @@ export function LocationPicker({ value, latitude, longitude, onChange }: Locatio
         </button>
         <button
           type="button"
-          onClick={() => setMode("enter")}
-          className={`px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
+          onClick={() => {setMode("enter"); clearLocation()}}
+          className={`cursor-pointer px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
             mode === "enter"
               ? "border-primary text-primary"
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -221,12 +222,12 @@ export function LocationPicker({ value, latitude, longitude, onChange }: Locatio
         <div className="space-y-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-2 block">Enter Location</label>
-            <textarea
+            <Textarea
               placeholder="Type your preferred meetup location (e.g., 'Coffee shop near Central Park, New York' or 'Main Street, Downtown')"
               value={manualLocation}
               onChange={(e) => setManualLocation(e.target.value)}
               onBlur={handleEnterLocation}
-              className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 resize-none"
+              className="w-full px-3 py-2 resize-none"
               rows={3}
             />
           </div>
@@ -234,7 +235,7 @@ export function LocationPicker({ value, latitude, longitude, onChange }: Locatio
       )}
 
       {/* Selected Location Display */}
-      {selectedLocation && (
+      {selectedLocation && mode === "search" && (
         <Card className="p-4 space-y-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">

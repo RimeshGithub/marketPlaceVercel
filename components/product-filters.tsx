@@ -61,14 +61,14 @@ export function ProductFilters() {
     searchParams.get("maxPrice")
 
   return (
-    <div className="space-y-6">
+    <div className="flex gap-3 max-xl:flex-col">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Search</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-2 -mt-3">
           <div className="space-y-2">
-            <Label htmlFor="search">Keywords</Label>
+            <Label htmlFor="search">Search by Keywords</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -84,55 +84,58 @@ export function ProductFilters() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="flex-1">
         <CardHeader>
           <CardTitle className="text-lg">Filters</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger id="category">
-                <SelectValue placeholder="All categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All categories">All categories</SelectItem>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <CardContent className="space-y-2 -mt-3 flex gap-5 max-lg:flex-col">
+          <div className="flex gap-5">
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="All categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All categories">All categories</SelectItem>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="condition">Condition</Label>
-            <Select value={condition} onValueChange={setCondition}>
-              <SelectTrigger id="condition">
-                <SelectValue placeholder="All conditions" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All conditions">All conditions</SelectItem>
-                {CONDITIONS.map((cond) => (
-                  <SelectItem key={cond} value={cond}>
-                    {cond}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label htmlFor="condition">Condition</Label>
+              <Select value={condition} onValueChange={setCondition}>
+                <SelectTrigger id="condition">
+                  <SelectValue placeholder="All conditions" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All conditions">All conditions</SelectItem>
+                  {CONDITIONS.map((cond) => (
+                    <SelectItem key={cond} value={cond}>
+                      {cond}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label>Price Range</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex gap-2">
               <Input
                 type="number"
                 placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 min="0"
-                step="0.01"
+                step="1"
+                className="w-40"
               />
               <Input
                 type="number"
@@ -140,13 +143,14 @@ export function ProductFilters() {
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 min="0"
-                step="0.01"
+                step="1"
+                className="w-40"
               />
             </div>
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button onClick={applyFilters} className="flex-1">
+            <Button onClick={applyFilters}>
               Apply
             </Button>
             {hasFilters && (

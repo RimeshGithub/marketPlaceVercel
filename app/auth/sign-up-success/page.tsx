@@ -9,11 +9,10 @@ export default function SignUpSuccessPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Thank you for signing up!</CardTitle>
-            <CardDescription>Check your email to confirm</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 -mt-5">
             <p className="text-sm text-muted-foreground">
-              You&apos;ve successfully signed up. Please check your email to confirm your account before signing in.
+              You&apos;ve successfully signed up. You can now log in.
             </p>
             <Button asChild className="w-full">
               <Link href="/auth/login">Go to Login</Link>

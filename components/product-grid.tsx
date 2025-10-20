@@ -32,16 +32,16 @@ export function ProductGrid({ products }: { products: Product[] }) {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
       {products.map((product) => (
-        <Card key={product.id} className="overflow-hidden group">
-          <Link href={`/products/${product.id}`}>
+        <Link key={product.id} href={`/products/${product.id}`}>
+          <Card className="overflow-hidden group hover:scale-102 h-full">
             <div className="aspect-square bg-muted overflow-hidden relative">
               {product.images && product.images.length > 0 ? (
                 <img
                   src={product.images[0] || "/placeholder.svg"}
                   alt={product.title}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  className="h-full w-full object-cover"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
@@ -52,24 +52,22 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 <WishlistButton productId={product.id} />
               </div>
             </div>
-          </Link>
-          <CardContent className="p-4">
-            <Link href={`/products/${product.id}`}>
-              <h3 className="font-semibold line-clamp-1 hover:text-primary transition-colors">{product.title}</h3>
-            </Link>
-            <p className="mt-1 text-2xl font-bold">${Number(product.price).toFixed(2)}</p>
-            <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Badge variant="secondary">{product.category}</Badge>
-              <Badge variant="outline">{product.condition}</Badge>
-            </div>
-            {product.profiles && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                Sold by {product.profiles.full_name || "Anonymous Seller"}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+            <CardContent className="p-4">
+              <h3 className="font-semibold line-clamp-1">{product.title}</h3>
+              <p className="mt-1 text-2xl font-bold">Rs {Number(product.price)}</p>
+              <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{product.description}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge variant="secondary">{product.category}</Badge>
+                <Badge variant="outline">{product.condition}</Badge>
+              </div>
+              {product.profiles && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Sold by {product.profiles.full_name || "Anonymous Seller"}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   )

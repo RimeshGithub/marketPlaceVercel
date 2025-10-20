@@ -38,6 +38,7 @@ export function GoogleAuthButton({ isSignUp = false }: GoogleAuthButtonProps) {
       onClick={handleGoogleAuth}
       disabled={isLoading}
     >
+      <img src="/google.png" alt="Google" className="mr-1 h-4 w-4" /> 
       {isLoading ? "Signing in..." : `Continue with Google`}
     </Button>
   )
