@@ -61,14 +61,14 @@ export async function Header() {
               <UserMenu user={user} />
             </>
           ) : (
-            <>
+            <div className="max-sm:flex max-sm:flex-col max-sm:gap-2">
               <Button variant="ghost" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>
               <Button asChild>
                 <Link href="/auth/sign-up">Sign up</Link>
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>

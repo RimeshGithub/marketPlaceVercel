@@ -25,6 +25,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link rel="manifest" href="/manifest.webmanifest" />
+      <link rel="icon" href="/icons/favicon.ico" />
       <body className={`${geistSans.className} antialiased`}>
         <Header />
         <div className="px-10 max-md:px-5 bg-gradient-to-b from-primary/10 to-background">{children}</div>

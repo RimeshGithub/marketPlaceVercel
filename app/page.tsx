@@ -62,7 +62,7 @@ export default async function HomePage() {
 
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 justify-center items-center">
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardContent>
                     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                       <Search className="h-6 w-6 text-primary" />
                     </div>
@@ -74,7 +74,7 @@ export default async function HomePage() {
                 </Card>
 
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardContent>
                     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                       <ShieldCheck className="h-6 w-6 text-primary" />
                     </div>
@@ -86,7 +86,7 @@ export default async function HomePage() {
                 </Card>
 
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardContent>
                     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                       <MessageSquare className="h-6 w-6 text-primary" />
                     </div>
@@ -98,7 +98,7 @@ export default async function HomePage() {
                 </Card>
 
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardContent>
                     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                       <Zap className="h-6 w-6 text-primary" />
                     </div>
@@ -150,7 +150,7 @@ export default async function HomePage() {
               </Button>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
               {products.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`}>
                   <Card className="overflow-hidden hover:scale-102 h-full">

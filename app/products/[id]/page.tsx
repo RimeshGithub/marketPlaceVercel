@@ -153,7 +153,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </Link>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 mt-3">
               {!isOwnProduct && product.status === "available" && (
                 <div className="flex gap-3">
                   {user ? (
@@ -165,12 +165,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   )}
                 </div>
               )}
-              <RateSellerButton sellerId={product.seller_id} />
+              {!isOwnProduct && <RateSellerButton sellerId={product.seller_id} />}
             </div>
 
-            <Button asChild variant="outline" className="w-full mt-2 bg-transparent">
+            {!isOwnProduct && <Button asChild variant="outline" className="w-full mt-2 bg-transparent">
               <Link href={`/seller/${product.seller_id}?allProducts=true`}>View all products</Link>
-            </Button>
+            </Button>}
           </CardContent>
         </Card>
 
