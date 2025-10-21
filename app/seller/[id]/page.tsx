@@ -13,11 +13,16 @@ export default async function SellerPage({ params }: { params: Promise<{ id: str
   const { id } = await params
   const supabase = await createClient()
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { data: seller } = await supabase.from("profiles").select("*").eq("id", id).single()
 
   const { data: review } = await supabase
     .from("ratings")
     .select("*")
+    .eq("buyer_id", user?.id)
     .eq("seller_id", id)
     .order("created_at", { ascending: false })
     .limit(1)

@@ -146,7 +146,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             {product.seller_email && (
               <Link href={`mailto:${product.seller_email}`}>
-                <div className="flex items-center gap-2 text-sm py-2">
+                <div className="flex items-center gap-2 text-sm pt-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <span>{product.seller_email}</span>
                 </div>
