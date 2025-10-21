@@ -21,7 +21,7 @@ export async function Header() {
   }
 
   return (
-    <header className="px-10 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="px-10 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur supports-[backdrop-filter]:bg-background/90">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex max-md:flex-col max-md:gap-4 items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export async function Header() {
               <UserMenu user={user} />
             </>
           ) : (
-            <div className="max-sm:flex max-sm:flex-col max-sm:gap-2">
+            <div className="flex max-sm:flex-col gap-2">
               <Button variant="ghost" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>

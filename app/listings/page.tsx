@@ -62,7 +62,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
           {products.map((product) => (
             <Link key={product.id} href={`/products/${product.id}`}>
               <Card className="overflow-hidden hover:scale-102 h-full">
-                <div className="aspect-square bg-muted">
+                <div className="aspect-square bg-muted max-h-90">
                   {product.images && product.images.length > 0 ? (
                     <img
                       src={product.images[0] || "/placeholder.svg"}
@@ -76,7 +76,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                   )}
                 </div>
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex items-start justify-between mb-4 max-sm:flex-col max-sm:gap-2">
                     <h3 className="font-semibold line-clamp-1">{product.title}</h3>
                     <Badge variant={product.status === "available" ? "default" : "secondary"}>
                       {product.status === "available" ? "Available" : "Sold"}

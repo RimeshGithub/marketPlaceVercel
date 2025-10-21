@@ -64,7 +64,7 @@ export async function ProductGrid({ products }: { products: Product[] }) {
       {products.map((product) => (
         <Link key={product.id} href={`/products/${product.id}`}>
           <Card className="overflow-hidden group hover:scale-102 h-full">
-            <div className="aspect-square bg-muted overflow-hidden relative">
+            <div className="aspect-square bg-muted overflow-hidden relative max-h-90">
               {product.images && product.images.length > 0 ? (
                 <img
                   src={product.images[0] || "/placeholder.svg"}

@@ -108,8 +108,8 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
       <h3 className="text-xl font-bold">Customer Reviews ({reviews.length})</h3>
       {reviews.map((review) => (
         <Card key={review.id}>
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
+          <CardContent className="px-6">
+            <div className="flex items-start justify-between max-sm:flex-col">
               <div className="flex gap-2 items-center mb-4">
                 <img src={reviewer?.find((r) => r.id === review.buyer_id)?.avatar_url?.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-12 w-12 rounded-full" />
                 <div className="flex flex-col gap-1">
@@ -126,7 +126,7 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 max-sm:px-1">
                 <span className="text-sm text-muted-foreground">
                   {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                 </span>
@@ -146,7 +146,7 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
                 )}
               </div>
             </div>
-            {review.comment && <p className="text-foreground">{review.comment}</p>}
+            {review.comment && <p className="text-foreground max-sm:mt-4">{review.comment}</p>}
           </CardContent>
         </Card>
       ))}

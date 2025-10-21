@@ -49,7 +49,7 @@ export default async function SellerPage({ params }: { params: Promise<{ id: str
             <p className="text-muted-foreground">{seller.email}</p>
           </div>
         </div>
-        <div className="mb-4 flex gap-3 items-center">
+        <div className="mb-4 flex gap-3 items-center px-15">
           <SellerRatingDisplay sellerId={id} />
           <Button variant="outline" asChild>
             <Link href="#review-section">View Reviews</Link>
