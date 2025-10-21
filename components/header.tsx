@@ -10,6 +10,16 @@ export async function Header() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  let unreadCount = 0
+  if (user) {
+    const { count } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .eq("receiver_id", user.id)
+      .eq("read", false)
+    unreadCount = count || 0
+  }
+
   return (
     <header className="px-10 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -37,9 +47,14 @@ export async function Header() {
                   <span className="sr-only">Wishlist</span>
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="relative">
                 <Link href="/messages">
                   <MessageSquare className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-0 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
                   <span className="sr-only">Messages</span>
                 </Link>
               </Button>

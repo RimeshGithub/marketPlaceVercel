@@ -55,14 +55,14 @@ export function MessagesList({
       <CardHeader>
         <CardTitle>Conversations</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 -mt-2 lg:overflow-y-auto lg:h-[calc(100%-80px)]">
-        <div className="divide-y max-lg:max-h-75 overflow-y-auto">
+      <CardContent className="p-0 -mt-3">
+        <div className="divide-y max-h-85 overflow-y-auto">
           {conversations.map((conversation) => (
             <button
               key={conversation.id}
-              onClick={() => router.push(`/messages?conversation=${conversation.id}`)}
+              onClick={() => {router.push(`/messages?conversation=${conversation.id}`); setTimeout(() => {router.refresh()}, 100)}}
               className={cn(
-                "w-full p-4 text-left transition-colors hover:bg-muted",
+                "w-full p-4 text-left transition-colors hover:bg-gray-700 cursor-pointer",
                 activeId === conversation.id && "bg-muted",
               )}
             >

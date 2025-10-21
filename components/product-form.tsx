@@ -220,6 +220,7 @@ export function ProductForm() {
                 placeholder="0"
                 required
                 value={formData.price}
+                onWheel={e => e.target.blur()}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
               />
             </div>

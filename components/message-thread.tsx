@@ -8,6 +8,7 @@ import { MessageSquare, Send, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ro } from "date-fns/locale"
 
 type Message = {
   id: string
@@ -171,6 +172,10 @@ export function MessageThread({
   const sendMessage = async () => {
     if (!newMessage.trim() || !otherUser) return
 
+    const parts = conversationId?.split("-")
+    const groupSize = parts && Math.floor(parts.length / 3)
+    const productId = groupSize && parts.slice(groupSize * 2).join("-")
+
     setIsSending(true)
     try {
       const supabase = createClient()
@@ -194,6 +199,7 @@ export function MessageThread({
 
       setMessages([...messages, data])
       setNewMessage("")
+      router.refresh()
 
       // Update URL if this was a new conversation
       if (!conversationId) {

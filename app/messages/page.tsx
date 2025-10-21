@@ -38,10 +38,9 @@ export default async function MessagesPage({
 
   messages?.forEach((message) => {
     const otherUserId = message.sender_id === user.id ? message.receiver_id : message.sender_id
-    const isBuyer = message.sender_id === user.id
-    const buyerId = isBuyer ? user.id : message.sender_id
-    const sellerId = isBuyer ? message.receiver_id : user.id
-    const productId = message.product_id || "no-product"
+    const buyerId = message.sender_id === user.id ? message.receiver_id : message.sender_id
+    const sellerId = message.sender_id === user.id ? message.sender_id : message.receiver_id
+    const productId = message.product_id
 
     // Create conversation key based on buyer, seller, and product
     const conversationKey = [buyerId, sellerId, productId].join("-")
