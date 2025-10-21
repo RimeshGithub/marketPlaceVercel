@@ -60,7 +60,7 @@ export default async function HomePage() {
                 </p>
               </div>
 
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 justify-center items-center">
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 justify-center">
                 <Card>
                   <CardContent>
                     <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
@@ -141,7 +141,7 @@ export default async function HomePage() {
 
       {/* Featured Products */}
       {user && products && products.length > 0 && (
-        <section className="pt-10 pb-30 mx-auto">
+        <section className="pt-10 pb-30">
           <div className="container">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
@@ -154,7 +154,7 @@ export default async function HomePage() {
               {products.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`}>
                   <Card className="overflow-hidden hover:scale-102 h-full">
-                    <div className="aspect-square bg-muted max-h-90">
+                    <div className="aspect-square bg-muted max-h-75">
                       {product.images && product.images.length > 0 ? (
                         <img
                           src={product.images[0] || "/placeholder.svg"}

@@ -69,16 +69,21 @@ export function ProductFilters() {
         <CardContent className="space-y-2 -mt-3">
           <div className="space-y-2">
             <Label htmlFor="search">Search by Keywords</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="search"
-                placeholder="Search products..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && applyFilters()}
-                className="pl-9"
-              />
+            <div className="flex gap-2 max-sm:flex-col">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="search"
+                  placeholder="Search products..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && applyFilters()}
+                  className="pl-9"
+                />
+              </div>
+              <Button onClick={applyFilters}>
+                Search
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -132,6 +137,7 @@ export function ProductFilters() {
                 type="number"
                 placeholder="Min"
                 value={minPrice}
+                onWheel={(e) => e.target.blur()}
                 onChange={(e) => setMinPrice(e.target.value)}
                 min="0"
                 step="1"
@@ -141,6 +147,7 @@ export function ProductFilters() {
                 type="number"
                 placeholder="Max"
                 value={maxPrice}
+                onWheel={(e) => e.target.blur()}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 min="0"
                 step="1"
