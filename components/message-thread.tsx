@@ -219,7 +219,7 @@ export function MessageThread({
         <CardContent className="flex flex-col items-center justify-center h-full py-16">
           <MessageSquare className="h-16 w-16 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-semibold">Select a conversation</h3>
-          <p className="mt-2 text-sm text-muted-foreground">Choose a conversation from the list to start messaging</p>
+          <p className="mt-2 text-sm text-muted-foreground text-center">Choose a conversation from the list to start messaging</p>
         </CardContent>
       </Card>
     )
