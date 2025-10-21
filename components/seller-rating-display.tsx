@@ -49,7 +49,7 @@ export function SellerRatingDisplay({ sellerId }: SellerRatingDisplayProps) {
         ))}
       </div>
       <span className="text-sm font-semibold">{averageRating}</span>
-      <span className="text-sm text-muted-foreground">({totalRatings} ratings)</span>
+      <span className="text-sm text-muted-foreground">({totalRatings} rating{totalRatings === 1 ? "" : "s"})</span>
     </div>
   )
 }

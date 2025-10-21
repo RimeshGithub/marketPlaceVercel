@@ -7,7 +7,26 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+
+    const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (!sessionError) {
+      // Get the current user session
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+
+      if (user && !userError) {
+        // Extract avatar URL from Google OAuth metadata
+        const avatarUrl = user.user_metadata?.avatar_url
+
+        if (avatarUrl) {
+          // Update the profile with the avatar URL
+          await supabase.from("profiles").update({ avatar_url: avatarUrl }).eq("id", user.id)
+        }
+      }
+    }
   }
 
   return NextResponse.redirect(new URL("/", request.url))

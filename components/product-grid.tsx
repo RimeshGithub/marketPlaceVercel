@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Package } from "lucide-react"
 import Link from "next/link"
 import { WishlistButton } from "@/components/wishlist-button"
+import { createClient } from "@/lib/supabase/server"
 
 type Product = {
   id: string
@@ -18,7 +19,34 @@ type Product = {
   }
 }
 
-export function ProductGrid({ products }: { products: Product[] }) {
+export async function ProductGrid({ products }: { products: Product[] }) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { data: wishlistItems } = await supabase
+    .from("wishlist")
+    .select(`
+      id,
+      products (
+        id,
+        title,
+        description,
+        price,
+        category,
+        condition,
+        images,
+        status,
+        profiles:seller_id (
+          full_name,
+          avatar_url
+        )
+      )
+    `)
+    .eq("user_id", user?.id)
+    .order("created_at", { ascending: false })
+  
   if (products.length === 0) {
     return (
       <Card>
@@ -49,7 +77,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                 </div>
               )}
               <div className="absolute top-2 right-2">
-                <WishlistButton productId={product.id} />
+                <WishlistButton productId={product.id} initialWishlisted={wishlistItems?.some((item) => item.products.id === product.id) ? true : false} />
               </div>
             </div>
             <CardContent className="p-4">

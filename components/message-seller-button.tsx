@@ -13,7 +13,7 @@ export function MessageSellerButton({ sellerId, productId }: { sellerId: string;
 
   return (
     <Button onClick={handleMessage} variant="outline">
-      <MessageSquare className="h-4 w-4" />
+      <MessageSquare className="h-4 w-4" /> Chat with Seller
     </Button>
   )
 }

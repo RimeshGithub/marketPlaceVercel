@@ -14,6 +14,7 @@ type Message = {
   content: string
   sender_id: string
   receiver_id: string
+  product_id: string | null
   created_at: string
   sender: {
     full_name: string | null
@@ -52,7 +53,7 @@ export function MessageThread({
     }
 
     loadMessages()
-  }, [conversationId, sellerId])
+  }, [conversationId, sellerId, productId])
 
   useEffect(() => {
     scrollToBottom()
@@ -70,7 +71,7 @@ export function MessageThread({
       // If starting new conversation with seller
       if (sellerId && !conversationId) {
         // Get seller info
-        const { data: sellerData } = await supabase.from("profiles").select("*").eq("id", sellerId).single()
+        const { data: sellerData } = await supabase.from("profiles").select("*").eq("id", sellerId).maybeSingle()
 
         if (sellerData) {
           setOtherUser({
@@ -81,7 +82,7 @@ export function MessageThread({
 
         // Get product info if provided
         if (productId) {
-          const { data: productData } = await supabase.from("products").select("*").eq("id", productId).single()
+          const { data: productData } = await supabase.from("products").select("*").eq("id", productId).maybeSingle()
 
           if (productData) {
             setProduct({
@@ -91,7 +92,6 @@ export function MessageThread({
           }
         }
 
-        // Check for existing messages
         const { data: existingMessages } = await supabase
           .from("messages")
           .select(`
@@ -99,6 +99,7 @@ export function MessageThread({
             sender:sender_id (full_name, email),
             receiver:receiver_id (full_name, email)
           `)
+          .eq("product_id", productId || null)
           .or(
             `and(sender_id.eq.${userId},receiver_id.eq.${sellerId}),and(sender_id.eq.${sellerId},receiver_id.eq.${userId})`,
           )
@@ -106,36 +107,59 @@ export function MessageThread({
 
         setMessages(existingMessages || [])
       } else if (conversationId) {
-        // Load existing conversation
-        const otherUserId = conversationId.split("-").find((id) => id !== userId)
+        const parts = conversationId.split("-")
+        const groupSize = Math.floor(parts.length / 3)
 
-        if (otherUserId) {
-          const { data: userData } = await supabase.from("profiles").select("*").eq("id", otherUserId).single()
+        const buyerId = parts.slice(0, groupSize).join("-")
+        const sellerId = parts.slice(groupSize, groupSize * 2).join("-")
+        const productId = parts.slice(groupSize * 2).join("-")
 
-          if (userData) {
-            setOtherUser({
-              id: userData.id,
-              name: userData.full_name || userData.email,
+        // Determine the other user ID
+        const otherUserId = buyerId === userId ? sellerId : buyerId
+
+        const { data: userData } = await supabase.from("profiles").select("*").eq("id", otherUserId).maybeSingle()
+
+        if (userData) {
+          setOtherUser({
+            id: userData.id,
+            name: userData.full_name || userData.email,
+          })
+        }
+
+        // Get product info if available
+        if (productId) {
+          const { data: productData } = await supabase.from("products").select("*").eq("id", productId).maybeSingle()
+
+          if (productData) {
+            setProduct({
+              id: productData.id,
+              title: productData.title,
             })
           }
-
-          const { data: conversationMessages } = await supabase
-            .from("messages")
-            .select(`
-              *,
-              sender:sender_id (full_name, email),
-              receiver:receiver_id (full_name, email)
-            `)
-            .or(
-              `and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`,
-            )
-            .order("created_at", { ascending: true })
-
-          setMessages(conversationMessages || [])
-
-          // Mark messages as read
-          await supabase.from("messages").update({ read: true }).eq("receiver_id", userId).eq("sender_id", otherUserId)
         }
+
+        const { data: conversationMessages } = await supabase
+          .from("messages")
+          .select(`
+            *,
+            sender:sender_id (full_name, email),
+            receiver:receiver_id (full_name, email)
+          `)
+          .eq("product_id", productId || null)
+          .or(
+            `and(sender_id.eq.${userId},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${userId})`,
+          )
+          .order("created_at", { ascending: true })
+
+        setMessages(conversationMessages || [])
+
+        // Mark messages as read
+        await supabase
+          .from("messages")
+          .update({ read: true })
+          .eq("receiver_id", userId)
+          .eq("sender_id", otherUserId)
+          .eq("product_id", productId || null)
       }
     } catch (error) {
       console.error("Error loading messages:", error)
@@ -173,7 +197,7 @@ export function MessageThread({
 
       // Update URL if this was a new conversation
       if (!conversationId) {
-        const newConversationId = [userId, otherUser.id].sort().join("-")
+        const newConversationId = [userId, otherUser.id, productId || "no-product"].join("-")
         router.push(`/messages?conversation=${newConversationId}`)
       }
     } catch (error) {
@@ -206,16 +230,16 @@ export function MessageThread({
   }
 
   return (
-    <Card className="lg:h-full lg:flex lg:flex-col">
+    <Card className="gap-0">
       <CardHeader className="border-b">
         <CardTitle>{otherUser?.name || "Unknown User"}</CardTitle>
         {product && (
           <Link href={`/products/${product.id}`} className="text-sm text-muted-foreground hover:text-primary">
-            Re: {product.title}
+            Product: {product.title}
           </Link>
         )}
       </CardHeader>
-      <CardContent className="flex-1 p-4 lg:overflow-y-auto">
+      <CardContent className="p-4 lg:h-60 h-100 overflow-y-auto">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <MessageSquare className="h-12 w-12 text-muted-foreground" />
@@ -234,7 +258,7 @@ export function MessageThread({
                   >
                     <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                     <p className={`text-xs mt-1 ${isOwn ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                      {new Date(message.created_at).toLocaleTimeString([], {
+                      {new Date(message.created_at).toUTCString().split(" ").slice(0, 4).join(" ") + " " + new Date(message.created_at).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -247,8 +271,8 @@ export function MessageThread({
           </div>
         )}
       </CardContent>
-      <div className="border-t p-4">
-        <div className="flex gap-2">
+      <div className="border-t px-4 pt-4">
+        <div className="flex gap-2 items-center">
           <Textarea
             placeholder="Type your message..."
             value={newMessage}

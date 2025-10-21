@@ -29,7 +29,7 @@ export function DeleteProductButton({ productId }: { productId: string }) {
 
       if (error) throw error
 
-      router.refresh()
+      router.push("/listings")
     } catch (error) {
       console.error("Error deleting product:", error)
     } finally {
@@ -41,7 +41,8 @@ export function DeleteProductButton({ productId }: { productId: string }) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" size="sm">
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4 mr-0.5" />
+          Delete Listing
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

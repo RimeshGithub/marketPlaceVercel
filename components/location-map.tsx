@@ -13,7 +13,7 @@ export function LocationMap({ latitude, longitude, locationName }: LocationMapPr
   const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.01},${latitude - 0.01},${longitude + 0.01},${latitude + 0.01}&layer=mapnik&marker=${latitude},${longitude}`
 
   return (
-    <Card className="overflow-hidden">
+    <div className="overflow-hidden">
       <div className="space-y-3 p-4">
         {locationName && (
           <div className="flex items-center gap-2">
@@ -43,6 +43,6 @@ export function LocationMap({ latitude, longitude, locationName }: LocationMapPr
           View on OpenStreetMap
         </a>
       </div>
-    </Card>
+    </div>
   )
 }

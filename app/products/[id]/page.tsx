@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Package, MapPin, Phone, Mail } from "lucide-react"
+import { MapPin, Phone, Mail, Settings } from "lucide-react"
 import { MessageSellerButton } from "@/components/message-seller-button"
 import Link from "next/link"
-import dynamic from "next/dynamic"
-import { WishlistButton } from "@/components/wishlist-button"
-import { RatingForm } from "@/components/rating-form"
+import { StatusToggleButton } from "@/components/status-toggle-button"
+import { DeleteProductButton } from "@/components/delete-product-button"
 import { SellerRatingDisplay } from "@/components/seller-rating-display"
 import LocationMap from "@/components/map-wrapper"
+import ProductImages from "@/components/image-gallery"
+import RateSellerButton from "@/components/rate-seller-button"
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -34,6 +35,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!product) {
     notFound()
   }
+
+  const { data: seller } = await supabase.from("profiles").select("*").eq("id", product.seller_id).single()
 
   const {
     data: { user },
@@ -70,43 +73,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="container py-10">
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-[2fr_3fr] mb-8">
         {/* Image Gallery */}
-        <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-lg border bg-muted relative">
-            {product.images && product.images.length > 0 ? (
-              <img
-                src={product.images[0] || "/placeholder.svg"}
-                alt={product.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <Package className="h-24 w-24 text-muted-foreground" />
-              </div>
-            )}
-            <div className="absolute top-4 right-4">
-              <WishlistButton productId={product.id} initialWishlisted={isWishlisted} />
-            </div>
-          </div>
-
-          {product.images && product.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.slice(1).map((image, index) => (
-                <div key={index} className="aspect-square overflow-hidden rounded-lg border bg-muted">
-                  <img
-                    src={image || "/placeholder.svg"}
-                    alt={`${product.title} ${index + 2}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductImages product={product} isWishlisted={isWishlisted} />
 
         {/* Product Info */}
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col justify-center px-4">
           <div>
             <div className="flex items-start justify-between gap-4 mb-2">
               <h1 className="text-3xl font-bold tracking-tight">{product.title}</h1>
@@ -114,7 +86,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 {product.status === "available" ? "Available" : "Sold"}
               </Badge>
             </div>
-            <p className="mt-2 text-4xl font-bold text-primary">${Number(product.price).toFixed(2)}</p>
+            <p className="mt-2 text-4xl font-bold text-primary">Rs {Number(product.price)}</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -128,104 +100,103 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <h2 className="text-lg font-semibold mb-2">Description</h2>
             <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{product.description}</p>
           </div>
+        </div>     
+      </div>
 
-          <Separator />
+      <Separator />
 
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-sm">
-              <MapPin className="h-5 w-5 text-muted-foreground" />
-              <div>
-                <p className="font-semibold">Preferred Meetup Location</p>
-                <p className="text-muted-foreground">{product.meetup_location}</p>
-              </div>
+      <div className="grid items-center mx-auto gap-8 max-w-2xl my-8">
+        <Card className="space-y-3 px-4">
+          <div className="flex items-center gap-3 text-sm">
+            <MapPin className="h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="font-semibold">Preferred Meetup Location</p>
+              <p className="text-muted-foreground">{product.meetup_location}</p>
             </div>
-
-            {product.latitude && product.longitude && (
-              <div className="mt-4">
-                <LocationMap latitude={product.latitude} longitude={product.longitude} />
-              </div>
-            )}
           </div>
 
-          <Separator />
+          {product.latitude !== 0 && product.longitude !== 0 && (
+            <div className="-mt-5">
+              <LocationMap latitude={product.latitude} longitude={product.longitude} />
+            </div>
+          )}
+        </Card>
 
-          {/* Seller Info */}
-          <Card>
-            <CardContent className="p-4 space-y-4">
-              <h3 className="font-semibold">Seller Information</h3>
+        {/* Seller Info */}
+        <Card>
+          <CardContent className="px-6 space-y-4">
+            <h3 className="font-semibold">Seller Information</h3>
 
-              <div>
-                <SellerRatingDisplay sellerId={product.seller_id} />
-              </div>
+            <div className="flex gap-2 items-center mb-4">
+              <img src={seller.avatar_url?.toString() ?? "/default.jpeg"} alt="profile" className="h-9 w-9 rounded-full" />
+              <h1 className="text-xl font-bold mb-2">{seller.full_name || "Seller"}</h1>
+            </div>
+            <div>
+              <SellerRatingDisplay sellerId={product.seller_id} />
+            </div>
 
-              <p className="text-sm text-muted-foreground">{product.profiles?.full_name || "Anonymous Seller"}</p>
-
-              {product.seller_phone && (
+            {product.seller_phone && (
+              <Link href={`tel:${product.seller_phone}`}>
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <span>{product.seller_phone}</span>
                 </div>
-              )}
+              </Link>
+            )}
 
-              {product.seller_email && (
-                <div className="flex items-center gap-2 text-sm">
+            {product.seller_email && (
+              <Link href={`mailto:${product.seller_email}`}>
+                <div className="flex items-center gap-2 text-sm py-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
                   <span>{product.seller_email}</span>
                 </div>
-              )}
+              </Link>
+            )}
 
-              <Button asChild variant="outline" className="w-full mt-2 bg-transparent">
-                <Link href={`/seller/${product.seller_id}`}>View all products</Link>
+            <div className="flex gap-2">
+              {!isOwnProduct && product.status === "available" && (
+                <div className="flex gap-3">
+                  {user ? (
+                    <MessageSellerButton sellerId={product.seller_id} productId={product.id} />
+                  ) : (
+                    <Button asChild className="flex-1">
+                      <Link href="/auth/login">Login to Contact Seller</Link>
+                    </Button>
+                  )}
+                </div>
+              )}
+              <RateSellerButton sellerId={product.seller_id} />
+            </div>
+
+            <Button asChild variant="outline" className="w-full mt-2 bg-transparent">
+              <Link href={`/seller/${product.seller_id}?allProducts=true`}>View all products</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {!isOwnProduct && product.status === "sold" && (
+          <Card className="bg-muted">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">This item has been sold</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {isOwnProduct && (
+          <Card className="max-w-lg mx-auto">
+            <CardContent className="px-4 flex flex-col gap-2 items-center">
+              <p className="text-sm text-muted-foreground">This is your listing</p>
+              <div className="flex gap-2 mt-2">
+                <StatusToggleButton productId={product.id} currentStatus={product.status} />
+                <DeleteProductButton productId={product.id} />
+              </div>
+              <Button asChild className="w-full" variant="ghost">
+                <Link href="/listings"><Settings className="mr-0.5 h-4 w-4" />Manage Listings</Link>
               </Button>
             </CardContent>
           </Card>
-
-          {/* Action Buttons */}
-          {!isOwnProduct && product.status === "available" && (
-            <div className="flex gap-3">
-              {user ? (
-                <MessageSellerButton sellerId={product.seller_id} productId={product.id} className="flex-1" />
-              ) : (
-                <Button asChild className="flex-1">
-                  <Link href="/auth/login">Login to Contact Seller</Link>
-                </Button>
-              )}
-            </div>
-          )}
-
-          {!isOwnProduct && product.status === "sold" && (
-            <Card className="bg-muted">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground">This item has been sold</p>
-              </CardContent>
-            </Card>
-          )}
-
-          {isOwnProduct && (
-            <Card className="bg-muted">
-              <CardContent className="p-4">
-                <p className="text-sm text-muted-foreground">This is your listing</p>
-                <Button asChild variant="outline" className="mt-3 w-full bg-transparent">
-                  <Link href="/dashboard">Manage Listing</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        )}
       </div>
-
-      {!isOwnProduct && user && !hasRated && (
-        <div className="mt-12 max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rate this seller</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RatingForm productId={product.id} sellerId={product.seller_id} />
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   )
 }

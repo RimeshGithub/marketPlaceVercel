@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { User, LogOut, Edit, Package } from "lucide-react"
+import { User, LogOut, Edit, Package, Star } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -56,9 +56,13 @@ export function UserMenu({ user }: { user: SupabaseUser }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+        <DropdownMenuItem onClick={() => router.push("/listings")}>
           <Package className="mr-0.5 h-4 w-4" />
           My Listings
+        </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/reviews")}>
+          <Star className="mr-0.5 h-4 w-4" />
+          My Reviews
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push("/profile")}>
           <Edit className="mr-0.5 h-4 w-4" />

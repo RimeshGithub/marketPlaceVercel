@@ -11,14 +11,14 @@ export async function Header() {
   } = await supabase.auth.getUser()
 
   return (
-    <header className="px-10 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="px-10 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
+        <div className="flex max-md:flex-col max-md:gap-4 items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
             <Package className="h-6 w-6" />
             <span className="text-xl font-bold">Marketplace</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="flex items-center gap-6">
             <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
               Browse
             </Link>

@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatDistanceToNow } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
-import { RatingForm } from "./rating-form"
 
 interface Review {
   id: string
@@ -17,12 +16,19 @@ interface Review {
   buyer_id: string
 }
 
+interface Reviewer {
+  id: string
+  full_name: string
+  avatar_url: string
+}
+
 interface SellerReviewsDisplayProps {
   sellerId: string
 }
 
 export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
   const [reviews, setReviews] = useState<Review[]>([])
+  const [reviewer, setReviewer] = useState<Reviewer[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null)
@@ -49,6 +55,13 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
       }
 
       setReviews(data || [])
+
+      const { data: reviewerInfo, error: reviewerError } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false })
+      setReviewer(reviewerInfo?.map((r) => ({ id: r.id, full_name: r.full_name, avatar_url: r.avatar_url })) || [])
+
       setLoading(false)
     }
 
@@ -68,6 +81,7 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
         title: "Success",
         description: "Review deleted successfully",
       })
+      window.location.reload()
     } catch (error) {
       console.error("Error deleting review:", error)
       toast({
@@ -76,10 +90,6 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
         variant: "destructive",
       })
     }
-  }
-
-  if (loading) {
-    return <div className="text-center py-8">Loading reviews...</div>
   }
 
   if (reviews.length === 0) {
@@ -99,16 +109,22 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
       {reviews.map((review) => (
         <Card key={review.id}>
           <CardContent className="p-6">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-2">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
-                    }`}
-                  />
-                ))}
+            <div className="flex items-start justify-between">
+              <div className="flex gap-2 items-center mb-4">
+                <img src={reviewer?.find((r) => r.id === review.buyer_id)?.avatar_url?.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-12 w-12 rounded-full" />
+                <div className="flex flex-col gap-1">
+                  <h1 className="text-lg font-bold">{currentUserId === review.buyer_id ? "Your Review" : reviewer?.find((r) => r.id === review.buyer_id)?.full_name || "Anonymous"}</h1>
+                  <div className="flex items-center gap-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${
+                          i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
@@ -119,7 +135,7 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setEditingReviewId(editingReviewId === review.id ? null : review.id)}
+                      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -130,34 +146,7 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
                 )}
               </div>
             </div>
-            {review.comment && <p className="text-foreground mb-4">{review.comment}</p>}
-
-            {editingReviewId === review.id && (
-              <div className="mt-4 pt-4 border-t">
-                <RatingForm
-                  productId=""
-                  sellerId={sellerId}
-                  existingRating={{
-                    id: review.id,
-                    rating: review.rating,
-                    comment: review.comment,
-                  }}
-                  onRatingSubmitted={() => {
-                    setEditingReviewId(null)
-                    // Refresh reviews
-                    const fetchReviews = async () => {
-                      const { data } = await supabase
-                        .from("ratings")
-                        .select("*")
-                        .eq("seller_id", sellerId)
-                        .order("created_at", { ascending: false })
-                      setReviews(data || [])
-                    }
-                    fetchReviews()
-                  }}
-                />
-              </div>
-            )}
+            {review.comment && <p className="text-foreground">{review.comment}</p>}
           </CardContent>
         </Card>
       ))}

@@ -21,7 +21,7 @@ export default async function HomePage() {
         avatar_url
       )
     `)
-    .eq("status", "available")
+    .eq("status", "available").neq("seller_id", user?.id)
     .order("created_at", { ascending: false })
     .limit(15)
 

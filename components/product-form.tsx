@@ -102,6 +102,18 @@ export function ProductForm() {
         throw new Error("Please select at least one payment method")
       }
 
+      if (!formData.category) {
+        throw new Error("Please select a category")
+      }
+
+      if(!formData.condition) {
+        throw new Error("Please select a condition")
+      }
+
+      if(images.length === 0) {
+        throw new Error("Please upload at least one image")
+      }
+
       if (formData.paymentMethods.includes("online_banking")) {
         if (!formData.bankName || !formData.bankAccountNumber) {
           throw new Error("Bank name and account number are required for online banking")
@@ -161,7 +173,7 @@ export function ProductForm() {
 
       if (insertError) throw insertError
 
-      router.push("/dashboard")
+      router.push("/listings")
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -215,7 +227,6 @@ export function ProductForm() {
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select
-                required
                 value={formData.category}
                 onValueChange={(value) => setFormData({ ...formData, category: value })}
               >
@@ -235,7 +246,6 @@ export function ProductForm() {
             <div className="space-y-2">
               <Label htmlFor="condition">Condition</Label>
               <Select
-                required
                 value={formData.condition}
                 onValueChange={(value) => setFormData({ ...formData, condition: value })}
               >
@@ -365,7 +375,6 @@ export function ProductForm() {
                     onChange={handleImageChange}
                     className="hidden"
                     id="image-upload"
-                    required={images.length === 0}
                   />
                   <Label
                     htmlFor="image-upload"
@@ -392,7 +401,7 @@ export function ProductForm() {
             />
           </div>
 
-          {error && <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{error}</div>}
+          {error && <div className="rounded-lg bg-destructive/30 border-red-500 border p-4 text-sm text-red-500">{error}</div>}
 
           <div className="flex gap-4 mt-10">
             <Button type="submit" disabled={isLoading} className="flex-1">

@@ -16,6 +16,11 @@ export default async function ProductsPage({
   const params = await searchParams
   const supabase = await createClient()
 
+  // Get user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   // Build query
   let query = supabase
     .from("products")
@@ -49,7 +54,7 @@ export default async function ProductsPage({
     query = query.lte("price", Number.parseFloat(params.maxPrice))
   }
 
-  const { data: products } = await query.order("created_at", { ascending: false })
+  const { data: products } = await query.order("created_at", { ascending: false }).neq("seller_id", user?.id).eq("status", "available")
 
   return (
     <div className="pt-10 pb-30">

@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Star } from "lucide-react"
+import { Star, Trash2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 
@@ -26,6 +26,7 @@ export function RatingForm({ productId, sellerId, onRatingSubmitted, existingRat
   const [isEditing, setIsEditing] = useState(!!existingRating)
   const supabase = createClient()
   const { toast } = useToast()
+  const reviewId = existingRating?.id
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,6 +71,7 @@ export function RatingForm({ productId, sellerId, onRatingSubmitted, existingRat
           title: "Success",
           description: "Rating updated successfully",
         })
+        window.location.reload()
       } else {
         const { error } = await supabase.from("ratings").insert({
           product_id: productId,
@@ -85,9 +87,7 @@ export function RatingForm({ productId, sellerId, onRatingSubmitted, existingRat
           title: "Success",
           description: "Rating submitted successfully",
         })
-
-        setRating(0)
-        setComment("")
+        window.location.reload()
       }
 
       onRatingSubmitted?.()
@@ -100,6 +100,29 @@ export function RatingForm({ productId, sellerId, onRatingSubmitted, existingRat
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleDelete = async (reviewId: string) => {
+    if (!confirm("Are you sure you want to delete this review?")) return
+
+    try {
+      const { error } = await supabase.from("ratings").delete().eq("id", reviewId)
+
+      if (error) throw error
+
+      toast({
+        title: "Success",
+        description: "Review deleted successfully",
+      })
+      window.location.reload()
+    } catch (error) {
+      console.error("Error deleting review:", error)
+      toast({
+        title: "Error",
+        description: "Failed to delete review",
+        variant: "destructive",
+      })
     }
   }
 
@@ -137,10 +160,17 @@ export function RatingForm({ productId, sellerId, onRatingSubmitted, existingRat
           className="min-h-24"
         />
       </div>
-
-      <Button type="submit" disabled={isLoading} className="w-full">
-        {isLoading ? "Submitting..." : isEditing ? "Update Rating" : "Submit Rating"}
-      </Button>
+      
+      <div className="flex gap-2">
+        <Button type="submit" disabled={isLoading} className="flex-1">
+          {isLoading ? "Submitting..." : isEditing ? "Update Rating" : "Submit Rating"}
+        </Button>
+        {reviewId && (
+          <Button type="button" variant="destructive" onClick={() => handleDelete(reviewId)}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
     </form>
   )
 }

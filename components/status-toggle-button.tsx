@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
-import { Loader2 } from "lucide-react"
+import { Loader2, CheckSquare } from "lucide-react"
 
 interface StatusToggleButtonProps {
   productId: string
@@ -32,15 +32,15 @@ export function StatusToggleButton({ productId, currentStatus }: StatusToggleBut
 
   return (
     <Button
-      variant="outline"
       size="sm"
+      variant="default"
       onClick={handleToggleStatus}
       disabled={isLoading}
-      className="flex-1 bg-transparent"
-    >
+      className="flex-1"
+    > 
+      <CheckSquare className="mr-0.5 h-4 w-4" />
       {isLoading ? (
         <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Updating...
         </>
       ) : currentStatus === "available" ? (

@@ -8,11 +8,18 @@ import { cn } from "@/lib/utils"
 
 type Conversation = {
   id: string
+  buyerId: string
+  sellerId: string
+  productId: string | null
   otherUser: {
     id: string
     full_name: string | null
     email: string
   }
+  product: {
+    id: string
+    title: string
+  } | null
   lastMessage: {
     content: string
     created_at: string
@@ -44,12 +51,12 @@ export function MessagesList({
   }
 
   return (
-    <Card className="lg:h-full lg:overflow-hidden">
+    <Card>
       <CardHeader>
         <CardTitle>Conversations</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 lg:overflow-y-auto lg:h-[calc(100%-80px)]">
-        <div className="divide-y">
+      <CardContent className="p-0 -mt-2 lg:overflow-y-auto lg:h-[calc(100%-80px)]">
+        <div className="divide-y max-lg:max-h-75 overflow-y-auto">
           {conversations.map((conversation) => (
             <button
               key={conversation.id}
@@ -64,9 +71,12 @@ export function MessagesList({
                   <p className="font-semibold truncate">
                     {conversation.otherUser.full_name || conversation.otherUser.email}
                   </p>
+                  {conversation.product && (
+                    <p className="text-xs text-muted-foreground truncate mt-1">Product: {conversation.product.title}</p>
+                  )}
                   <p className="text-sm text-muted-foreground truncate mt-1">{conversation.lastMessage.content}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {new Date(conversation.lastMessage.created_at).toLocaleDateString()}
+                    {new Date(conversation.lastMessage.created_at).toUTCString().split(" ").slice(0, 4).join(" ")}
                   </p>
                 </div>
                 {conversation.unreadCount > 0 && (
