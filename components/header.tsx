@@ -61,7 +61,7 @@ export async function Header() {
               <UserMenu user={user} />
             </>
           ) : (
-            <div className="flex max-sm:flex-col gap-2">
+            <div className="flex gap-2">
               <Button variant="ghost" asChild>
                 <Link href="/auth/login">Login</Link>
               </Button>
