@@ -21,7 +21,7 @@ export async function Header() {
   }
 
   return (
-    <header className="px-10 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur supports-[backdrop-filter]:bg-background/90">
+    <header className="px-10 max-sm:px-4 max-md:py-5 sticky top-0 z-50 w-full border-b bg-background/98 backdrop-blur supports-[backdrop-filter]:bg-background/90">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex max-md:flex-col max-md:gap-4 items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
