@@ -106,27 +106,42 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
   return (
     <div className="space-y-4">
       <h3 className="text-xl font-bold">Customer Reviews ({reviews.length})</h3>
-      {reviews.map((review) => (
+      {[...reviews]
+      .sort((a, b) => (a.buyer_id === currentUserId ? -1 : b.buyer_id === currentUserId ? 1 : 0))
+      .map((review) => (
         <Card key={review.id}>
           <CardContent className="px-6">
             <div className="flex items-start justify-between max-sm:flex-col">
               <div className="flex gap-2 items-center mb-4">
-                <img src={reviewer?.find((r) => r.id === review.buyer_id)?.avatar_url?.toString() ?? "/default.jpeg"} alt="profile" className="mr-2 h-12 w-12 rounded-full" />
+                <img
+                  src={
+                    reviewer?.find((r) => r.id === review.buyer_id)?.avatar_url?.toString() ??
+                    "/default.jpeg"
+                  }
+                  alt="profile"
+                  className="mr-2 h-12 w-12 rounded-full"
+                />
                 <div className="flex flex-col gap-1">
-                  <h1 className="text-lg font-bold">{currentUserId === review.buyer_id ? "Your Review" : reviewer?.find((r) => r.id === review.buyer_id)?.full_name || "Anonymous"}</h1>
+                  <h1 className="text-lg font-bold">
+                    {currentUserId === review.buyer_id
+                      ? "Your Review"
+                      : reviewer?.find((r) => r.id === review.buyer_id)?.full_name || "Anonymous"}
+                  </h1>
                   <div className="flex items-center gap-2">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`h-4 w-4 ${
-                          i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
+                          i < review.rating
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-muted-foreground"
                         }`}
                       />
                     ))}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 max-sm:px-1">
+              <div className="flex items-center sm:gap-3 max-sm:justify-between max-sm:px-1 max-sm:w-full">
                 <span className="text-sm text-muted-foreground">
                   {formatDistanceToNow(new Date(review.created_at), { addSuffix: true })}
                 </span>
@@ -146,7 +161,9 @@ export function SellerReviewsDisplay({ sellerId }: SellerReviewsDisplayProps) {
                 )}
               </div>
             </div>
-            {review.comment && <p className="text-foreground max-sm:mt-4">{review.comment}</p>}
+            {review.comment && (
+              <p className="text-foreground max-sm:mt-4">{review.comment}</p>
+            )}
           </CardContent>
         </Card>
       ))}

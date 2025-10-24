@@ -58,7 +58,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 max-sm:gap-3">
           {products.map((product) => (
             <Link key={product.id} href={`/products/${product.id}`}>
               <Card className="overflow-hidden hover:scale-102 h-full">

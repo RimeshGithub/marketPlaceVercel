@@ -40,7 +40,7 @@ export function DeleteProductButton({ productId }: { productId: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
+        <Button variant="destructive" size="sm" className="flex-1 w-40">
           <Trash2 className="h-4 w-4 mr-0.5" />
           Delete Listing
         </Button>

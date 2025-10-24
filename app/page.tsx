@@ -23,7 +23,7 @@ export default async function HomePage() {
     `)
     .eq("status", "available").neq("seller_id", user?.id)
     .order("created_at", { ascending: false })
-    .limit(15)
+    .limit(30)
 
   return (
     <div className="flex flex-col">
@@ -150,7 +150,7 @@ export default async function HomePage() {
               </Button>
             </div>
 
-            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 grid-cols-2 lg:grid-cols-3 max-sm:gap-3">
               {products.map((product) => (
                 <Link key={product.id} href={`/products/${product.id}`}>
                   <Card className="overflow-hidden hover:scale-102 h-full">

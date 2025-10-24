@@ -156,7 +156,7 @@ export function ProductFilters() {
             </div>
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-2 pt-0">
             <Button onClick={applyFilters}>
               Apply
             </Button>
