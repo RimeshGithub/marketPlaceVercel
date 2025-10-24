@@ -62,7 +62,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
           {products.map((product) => (
             <Link key={product.id} href={`/products/${product.id}`}>
               <Card className="overflow-hidden hover:scale-102 h-full">
-                <div className="aspect-square bg-muted max-h-90">
+                <div className="aspect-square bg-muted overflow-hidden max-h-90">
                   {product.images && product.images.length > 0 ? (
                     <img
                       src={product.images[0] || "/placeholder.svg"}
