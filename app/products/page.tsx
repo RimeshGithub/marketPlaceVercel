@@ -54,7 +54,7 @@ export default async function ProductsPage({
     query = query.lte("price", Number.parseFloat(params.maxPrice))
   }
 
-  const { data: products } = await query.order("created_at", { ascending: false }).neq("seller_id", user?.id).eq("status", "available")
+  const { data: products } = user ? await query.order("created_at", { ascending: false }).eq("seller_id", user?.id).eq("status", "available") : await query.order("created_at", { ascending: false }).eq("status", "available")
 
   return (
     <div className="pt-10 pb-30">
